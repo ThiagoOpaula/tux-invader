@@ -55,8 +55,9 @@ class VirtualKeyboardMouse:
         self._held: tuple[int, ...] = ()
 
     @property
-    def device_path(self) -> str:
-        return self._ui.device.path
+    def device_path(self) -> str | None:
+        """Where the desktop reads it, or None if this user may not open its node (e.g. no permissions rule)."""
+        return self._ui.device.path if self._ui.device else None
 
     def move(self, dx: int, dy: int) -> None:
         if dx:

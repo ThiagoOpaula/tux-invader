@@ -44,5 +44,14 @@ class KeyChangeTests(unittest.TestCase):
         self.assertEqual(km.key_changes((self.ctrl,), (self.ctrl,)), [])
 
 
+class DevicePathTests(unittest.TestCase):
+    def test_none_when_this_user_may_not_open_the_node(self):
+        # evdev leaves .device as None when opening the node it just created fails; the pad still works,
+        # and logging that path must not crash it (that killed the service on every restart).
+        keyboard_mouse = km.VirtualKeyboardMouse.__new__(km.VirtualKeyboardMouse)  # no real /dev/uinput
+        keyboard_mouse._ui = type("FakeUInput", (), {"device": None})()
+        self.assertIsNone(keyboard_mouse.device_path)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -50,5 +50,12 @@ class PaddleCodeTests(unittest.TestCase):
         self.assertEqual(codes, {"M1": 0x225, "M2": 0x224, "M3": 0x227, "M4": 0x226})  # GRIPR, GRIPL, GRIPR2, GRIPL2
 
 
+class DevicePathTests(unittest.TestCase):
+    def test_none_when_this_user_may_not_open_the_node(self):
+        pad = virtual_pad.VirtualElite.__new__(virtual_pad.VirtualElite)  # no real /dev/uinput
+        pad._ui = type("FakeUInput", (), {"device": None})()
+        self.assertIsNone(pad.device_path)
+
+
 if __name__ == "__main__":
     unittest.main()

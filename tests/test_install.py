@@ -103,6 +103,14 @@ class QuotingTests(unittest.TestCase):
         self.assertEqual(install.unit_exec(["/a/100%/$HOME/b c", "pad"]), '"/a/100%%/$$HOME/b c" "pad"')
 
 
+class UnitFileTests(unittest.TestCase):
+    def test_a_crashing_pad_fails_instead_of_restarting_forever(self):
+        unit = install.unit_text(["/app/tux-invader", "pad"])
+        self.assertIn("Restart=on-failure", unit)
+        self.assertIn("StartLimitIntervalSec=60", unit)
+        self.assertIn("StartLimitBurst=5", unit)
+
+
 class SetupTests(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()

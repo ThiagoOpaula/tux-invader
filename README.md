@@ -82,7 +82,7 @@ unplug, switch between cable and dongle, or turn the controller off, it reconnec
 | Sticks, triggers, A B X Y, LB RB, L3 R3, D-pad | Same Xbox buttons and axes |
 | Select, Start, Home | Back (View), Start (Menu), Guide |
 | M1 / M2 / M3 / M4 | Paddles P1 / P2 / P3 / P4 (as Steam names them) |
-| C, Z, LM, RM, FN | Extra buttons 1-5 (bindable in Steam and some games) |
+| C, Z, LM, RM, FN | Extra buttons 1-5 (no slots in Steam's controller layout, so bind them in games that read raw joystick buttons, or remap them) |
 | Turbo | Switches gyro aiming on and off (not sent to games) |
 
 ### Gyro aiming
@@ -306,8 +306,9 @@ and its virtual devices keep their original names, so existing setups keep worki
 
 `vader5/data/70-vader5-pro.rules` gives the logged-in user access to this controller's hidraw
 interface (inputs, rumble, test mode) and its USB device, which lets `vader5-pad` remove the basic
-Xbox pad while it runs, and to `/dev/uinput`, which it needs to create the virtual controller, keyboard
-and mouse. Steam's own udev rules grant the same kind of access. `setup` installs the rule for you;
+Xbox pad while it runs, to `/dev/uinput`, which it needs to create the virtual controller, keyboard
+and mouse, and to the device nodes those virtual devices get, which the desktop and games read.
+Steam's own udev rules grant the same kind of access. `setup` installs the rule for you;
 by hand:
 
 ```sh
@@ -333,9 +334,11 @@ sudo udevadm control --reload-rules
   but they aren't part of what you run.)
 - **The permissions rule is as narrow as the job allows.** The controller's hidraw node and USB device
   are matched by this controller's vendor and product ID, and only the person logged in at the screen
-  gets access. `/dev/uinput` is the exception: it can't be narrowed, and it lets programs you run create
-  virtual keyboards and mice. Steam's own rules grant the same; if you'd rather not, Steam's rules may
-  already cover uinput on your system and you can drop that line from the rule.
+  gets access. The nodes of the virtual controller and its keyboard and mouse are matched by the
+  `vader5-pad/` phys string the app gives them, which nothing else on the system uses. `/dev/uinput`
+  is the exception: it can't be narrowed, and it lets programs you run create virtual keyboards and
+  mice. Steam's own rules grant the same; if you'd rather not, Steam's rules may already cover uinput
+  on your system and you can drop that line from the rule.
 - **Writes only to your own files:** `~/.config/vader5` (settings), `~/.local/share` (menu entry and
   icon), `~/Applications` (the AppImage copy) and `~/.config/systemd/user` (the service). `uninstall`
   removes them; your settings stay unless you delete them.

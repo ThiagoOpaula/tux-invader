@@ -47,6 +47,7 @@ RUMBLE_REPORT_S = 60.0  # how often to log how busy games keep the rumble
 RUMBLE_BUSY = 600  # log it when games changed rumble more than this often in that time (10 a second)
 GYRO_CUE_ON = ((0, 150), 0.08)  # (strong, weak), seconds: short light buzz = gyro aiming on
 GYRO_CUE_OFF = ((150, 0), 0.25)  # longer heavy buzz = gyro aiming off
+NODE_MISSING = "node not readable by this user: the desktop and games won't see it, install the permissions rule"
 
 
 def log(message: str) -> None:
@@ -229,8 +230,8 @@ def create_virtual_devices() -> tuple[VirtualElite, VirtualKeyboardMouse]:
     except OSError as err:
         vpad.close()
         raise DeviceError(f"Couldn't create the virtual keyboard and mouse ({err}). Check access to /dev/uinput.") from err
-    log(f"controller active: virtual Xbox Elite controller ({vpad.device_path}) "
-        f"and keyboard and mouse ({keyboard_mouse.device_path}) created")
+    log(f"controller active: virtual Xbox Elite controller ({vpad.device_path or NODE_MISSING}) "
+        f"and keyboard and mouse ({keyboard_mouse.device_path or NODE_MISSING}) created")
     return vpad, keyboard_mouse
 
 

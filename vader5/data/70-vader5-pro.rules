@@ -9,3 +9,8 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="37d7", ATTRS{idP
 # /dev/uinput: lets vader5-pad create the virtual controller, keyboard and mouse. Steam's own rules grant
 # the same, but not every system has Steam installed.
 KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
+
+# The device nodes of the virtual controller and its keyboard and mouse: without this they stay root:input,
+# so the desktop and every game can't read them (the system only hands out joystick nodes by itself).
+# "vader5-pad/input*" is the phys vader5-pad gives them, so nothing else on the system matches.
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{phys}=="vader5-pad/input*", MODE="0660", TAG+="uaccess"

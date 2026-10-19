@@ -90,6 +90,10 @@ def unit_exec(argv: list[str]) -> str:
 def unit_text(pad_command: list[str]) -> str:
     return f"""[Unit]
 Description={APP_NAME}: Flydigi Vader 5 Pro as a virtual Xbox Elite controller
+# A pad that crashes at startup (a bug, or a missing permission) shows up as stopped after an error in
+# the settings window, instead of being restarted forever.
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 ExecStart={unit_exec(pad_command)}

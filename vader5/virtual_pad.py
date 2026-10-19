@@ -31,7 +31,8 @@ BUTTON_CODES = {
     # Back buttons -> Elite paddles P1-P4 as Steam shows them. SDL numbers the paddles
     # BTN_GRIPR, BTN_GRIPL, BTN_GRIPR2, BTN_GRIPL2 as paddle 1-4 (checked in Steam's controller settings).
     "M1": BTN_GRIPR, "M2": BTN_GRIPL, "M3": BTN_GRIPR2, "M4": BTN_GRIPL2,
-    # No Xbox equivalent: extra joystick buttons that Steam and some games can still bind.
+    # No Xbox equivalent, so SDL's Xbox mapping has no slots for them and Steam's controller layout
+    # can't bind them: they reach games that read raw joystick buttons, or a remap in the settings.
     "C": e.BTN_TRIGGER_HAPPY1, "Z": e.BTN_TRIGGER_HAPPY2,
     "LM": e.BTN_TRIGGER_HAPPY3, "RM": e.BTN_TRIGGER_HAPPY4,
     "FN": e.BTN_TRIGGER_HAPPY5, "TURBO": e.BTN_TRIGGER_HAPPY6,
@@ -85,8 +86,9 @@ class VirtualElite:
         self.rumble: tuple[int, int] = (0, 0)  # motor levels (0-255) games currently ask for
 
     @property
-    def device_path(self) -> str:
-        return self._ui.device.path
+    def device_path(self) -> str | None:
+        """Where the desktop reads it, or None if this user may not open its node (e.g. no permissions rule)."""
+        return self._ui.device.path if self._ui.device else None
 
     def fileno(self) -> int:
         return self._ui.fd
